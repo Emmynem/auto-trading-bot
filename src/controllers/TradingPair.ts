@@ -38,13 +38,50 @@ export async function findGraduatingCoins() {
 	try {
 		const pairs = await TradingPair.findAll();
 
+		// const highPotential = pairs.filter((coin) => {
+		// 	// Ensure values exist to prevent errors
+		// 	const liquidity = coin.liquidity || 0;
+		// 	const volume24h = coin.volume_h24 || 0;
+		// 	const volume6h = coin.volume_h6 || 0;
+		// 	const volume1h = coin.volume_h1 || 0;
+		// 	const volume5m = coin.volume_m5 || 0;
+		// 	const marketCap = coin.marketCap || 0;
+		// 	const pairCreated = coin.pairCreated || ""; // Ensure it's a string
+		// 	const trendScore = coin.trendScore || 0;
+
+		// 	// 🕒 Ensure it's a **recent** token (less than 48h old)
+		// 	const maxAgeInHours = 48;
+
+		// 	// Convert the `pairCreated` string (YYYY-MM-DD HH:mm:ss) to a Date object
+		// 	const pairCreatedDate = moment(pairCreated, "YYYY-MM-DD HH:mm:ss").toDate();
+
+		// 	// Calculate token age in hours
+		// 	const tokenAge = (Date.now() - pairCreatedDate.getTime()) / (1000 * 60 * 60);
+		// 	const isNewToken = tokenAge < maxAgeInHours; // Only allow tokens less than 48h old
+
+		// 	// 💰 Growing liquidity (Prevent dead coins)
+		// 	const isGrowingLiquidity = liquidity >= 100000; // Now needs at least $100K to be safer
+
+		// 	// 📊 Strong trading volume (Buy pressure)
+		// 	const isGrowingVolume =
+		// 		volume24h >= 500000 || // 24h volume must be at least $500K
+		// 		volume6h >= 300000 ||  // OR 6h volume at least $300K
+		// 		volume1h >= 150000 ||  // OR 1h volume at least $150K
+		// 		volume5m >= 50000;     // OR 5m volume at least $50K (high activity)
+
+		// 	// 🚀 Small-cap gems (Room for massive growth)
+		// 	const isSmallCap = marketCap > 0 && marketCap < 5000000; // Market cap < $5M
+
+		// 	// 🔥 Trend Score Check (Only keep **high potential** coins)
+		// 	const meetsTrendScore = trendScore >= trading.tradingScore; // (config = 70)
+
+		// 	return isNewToken && isGrowingLiquidity && isGrowingVolume && isSmallCap && meetsTrendScore;
+		// });
+
+		// // 🏆 Sort by highest trend score
+		// return highPotential.sort((a, b) => b.trendScore - a.trendScore);
+
 		const highPotential = pairs.filter((coin) => {
-			// Ensure values exist to prevent errors
-			const liquidity = coin.liquidity || 0;
-			const volume24h = coin.volume_h24 || 0;
-			const volume6h = coin.volume_h6 || 0;
-			const volume1h = coin.volume_h1 || 0;
-			const volume5m = coin.volume_m5 || 0;
 			const marketCap = coin.marketCap || 0;
 			const pairCreated = coin.pairCreated || ""; // Ensure it's a string
 			const trendScore = coin.trendScore || 0;
@@ -59,23 +96,13 @@ export async function findGraduatingCoins() {
 			const tokenAge = (Date.now() - pairCreatedDate.getTime()) / (1000 * 60 * 60);
 			const isNewToken = tokenAge < maxAgeInHours; // Only allow tokens less than 48h old
 
-			// 💰 Growing liquidity (Prevent dead coins)
-			const isGrowingLiquidity = liquidity >= 100000; // Now needs at least $100K to be safer
-
-			// 📊 Strong trading volume (Buy pressure)
-			const isGrowingVolume =
-				volume24h >= 500000 || // 24h volume must be at least $500K
-				volume6h >= 300000 ||  // OR 6h volume at least $300K
-				volume1h >= 150000 ||  // OR 1h volume at least $150K
-				volume5m >= 50000;     // OR 5m volume at least $50K (high activity)
-
 			// 🚀 Small-cap gems (Room for massive growth)
 			const isSmallCap = marketCap > 0 && marketCap < 5000000; // Market cap < $5M
 
 			// 🔥 Trend Score Check (Only keep **high potential** coins)
 			const meetsTrendScore = trendScore >= trading.tradingScore; // (config = 70)
 
-			return isNewToken && isGrowingLiquidity && isGrowingVolume && isSmallCap && meetsTrendScore;
+			return isNewToken && isSmallCap && meetsTrendScore;
 		});
 
 		// 🏆 Sort by highest trend score
