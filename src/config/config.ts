@@ -2,7 +2,7 @@ export const trading = {
 	enabled: true,
 	tradeAmount: 0.1,
 	tradingScore: 75,
-	botTimer: 60 // In mins 5, 20, 10
+	botTimer: 360 // In mins 5, 20, 10
 };
 
 export const timestamp_str_alt = (date: string | number) => {
